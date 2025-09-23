@@ -1,14 +1,15 @@
 import RemoveButton from "@/app/images/X buttonIcon";
 import CreatePostIcon from "../images/createPostIcon";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const Page = () => {
   return (
     <div>
       <div>
-        <a href="/">
+        <Link href="/">
           <RemoveButton />
-        </a>
+        </Link>
         <div className="text-4 font-bold flex justify-center">
           New Photo Post
         </div>
