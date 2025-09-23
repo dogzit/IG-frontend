@@ -77,7 +77,7 @@ const Page = () => {
           </div>
 
           <div className="text-center text-sm">
-            <span className="text-gray-600">Don't have an account? </span>
+            <span className="text-gray-600">Do not have an account? </span>
             <a
               href="/sign-up"
               className="font-semibold text-[#0095F6] hover:underline"
