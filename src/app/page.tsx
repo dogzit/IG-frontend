@@ -13,7 +13,7 @@ const Page = () => {
   return (
     <div>
       <a href="/createPost">Create Post</a>
-      <div>{user?.username}</div>
+      <div>{user}</div>
     </div>
   );
 };
