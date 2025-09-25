@@ -9,9 +9,8 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
-
 type ContentType = {
-  user: string;
+  user: User | null; // энд User | null гэж зөв заах хэрэгтэй
   login: (email: string, password: string) => Promise<void>;
   registeruser: (
     email: string,
@@ -20,10 +19,17 @@ type ContentType = {
   ) => Promise<void>;
 };
 
+type User = {
+  email: string;
+  password: string;
+  username: string;
+  bio: string | null;
+  profilePicture: string | null;
+};
 export const AuthContext = createContext<ContentType | null>(null);
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const { push } = useRouter();
   useEffect(() => {
     const userItem = localStorage.getItem("user");

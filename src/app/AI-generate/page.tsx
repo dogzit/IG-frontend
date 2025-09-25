@@ -4,6 +4,7 @@ import RemoveButton from "@/app/images/X buttonIcon";
 import { Button } from "@/components/ui/button";
 
 import { Textarea } from "@/components/ui/textarea";
+import { upload } from "@vercel/blob/client";
 
 import { ChangeEvent, useState } from "react";
 
@@ -38,6 +39,12 @@ const Page = () => {
     const blob = await response.blob();
     const imageUrl = URL.createObjectURL(blob);
     setImages(imageUrl);
+
+    const file = new File([blob], "generated.png", { type: "image/png" });
+    const uploaded = await upload(file.name, file, {
+      access: "public",
+      handleUploadUrl: "/api/upload",
+    });
   };
 
   return (
