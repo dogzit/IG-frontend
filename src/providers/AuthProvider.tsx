@@ -24,14 +24,17 @@ type ContentType = {
 type decodedTokenType = {
   data: User;
 };
-type User = {
+export type User = {
   _id: string;
-  email: string;
-  password: string;
   username: string;
-  bio: string | null;
-  profilePicture: string | null;
+  email: string;
+  profilePicture?: string;
+  followers: string[];
+  following: string[];
+  createdAt: Date;
+  updatedAt: Date;
 };
+
 export const AuthContext = createContext<ContentType | null>(null);
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
