@@ -34,7 +34,7 @@ const Page = () => {
   const myid = user?._id;
 
   const allPost = async () => {
-    const res = await fetch("http://localhost:6969/post/get", {
+    const res = await fetch("https://ig-backend-jivs.onrender.com/post/get", {
       method: "GET",
       headers: { authorization: `Bearer ${token}` },
     });
@@ -48,10 +48,13 @@ const Page = () => {
   }, [token]);
 
   const like = async (postId: string) => {
-    await fetch(`http://localhost:6969/post/toggle-like/${postId}`, {
-      method: "POST",
-      headers: { authorization: `Bearer ${token}` },
-    });
+    await fetch(
+      `https://ig-backend-jivs.onrender.com/post/toggle-like/${postId}`,
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}` },
+      }
+    );
     allPost();
   };
 

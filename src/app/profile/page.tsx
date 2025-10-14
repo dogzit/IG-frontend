@@ -29,10 +29,13 @@ const Page = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
 
   const fetchData = async () => {
-    const response = await fetch(`http://localhost:6969/post/user`, {
-      method: "GET",
-      headers: { authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      `https://ig-backend-jivs.onrender.com/post/user`,
+      {
+        method: "GET",
+        headers: { authorization: `Bearer ${token}` },
+      }
+    );
     const data = await response.json();
     setPosts(data);
   };

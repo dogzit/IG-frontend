@@ -64,17 +64,20 @@ const Page = () => {
   const createPost = async () => {
     try {
       setPosting(true);
-      const response = await fetch("http://localhost:6969/post/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          image: [image],
-          caption: caption,
-        }),
-      });
+      const response = await fetch(
+        "https://ig-backend-jivs.onrender.com/post/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            image: [image],
+            caption: caption,
+          }),
+        }
+      );
 
       if (response.ok) {
         router.push("/");
