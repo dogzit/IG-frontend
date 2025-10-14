@@ -7,22 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Page = () => {
-  const { login, user } = useUser();
+  const { login, token } = useUser();
   const { push } = useRouter();
 
   useEffect(() => {
-    if (user) {
+    if (token) {
       push("/");
     }
-  }, [user]);
+  }, [token]);
 
   const handleLogin = async () => {
     const email = InputValues.email;
     const password = InputValues.password;
     await login(email, password);
-    if (user) {
+    if (token) {
       push("/");
     }
   };
@@ -78,12 +79,12 @@ const Page = () => {
 
           <div className="text-center text-sm">
             <span className="text-gray-600">Do not have an account? </span>
-            <a
+            <Link
               href="/sign-up"
               className="font-semibold text-[#0095F6] hover:underline"
             >
               Sign up
-            </a>
+            </Link>
           </div>
         </div>
       </Card>

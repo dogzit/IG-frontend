@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  env: { HF: process.env.HF ?? "" },
 };
 
 export default nextConfig;

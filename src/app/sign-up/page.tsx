@@ -7,23 +7,24 @@ import { Card } from "@/components/ui/card";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useUser } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Page = () => {
-  const { registeruser, user } = useUser();
+  const { registeruser, token } = useUser();
   const { push } = useRouter();
 
   useEffect(() => {
-    if (user) {
+    if (token) {
       push("/");
     }
-  }, [user]);
+  }, [token]);
 
   const handleregisteruser = async () => {
     const email = InputValues.email;
     const password = InputValues.password;
     const username = InputValues.username;
     await registeruser(email, password, username);
-    if (user) {
+    if (token) {
       push("/");
     }
   };
@@ -98,12 +99,12 @@ const Page = () => {
 
           <div className="text-center text-sm">
             <span className="text-gray-600">Have an account? </span>
-            <a
+            <Link
               href="/login"
               className="font-semibold text-[#0095F6] hover:underline"
             >
               Log in
-            </a>
+            </Link>
           </div>
         </div>
       </Card>

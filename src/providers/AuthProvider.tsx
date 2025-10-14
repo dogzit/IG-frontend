@@ -1,5 +1,6 @@
 "use client";
 
+import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -10,16 +11,21 @@ import {
 } from "react";
 import { toast } from "sonner";
 type ContentType = {
-  user: User | null; // энд User | null гэж зөв заах хэрэгтэй
+  user: User | null;
+  token: string | null;
   login: (email: string, password: string) => Promise<void>;
+
   registeruser: (
     email: string,
     password: string,
     username: string
   ) => Promise<void>;
 };
-
+type decodedTokenType = {
+  data: User;
+};
 type User = {
+  _id: string;
   email: string;
   password: string;
   username: string;
@@ -30,11 +36,16 @@ export const AuthContext = createContext<ContentType | null>(null);
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const { push } = useRouter();
   useEffect(() => {
-    const userItem = localStorage.getItem("user");
-    if (userItem) {
-      setUser(JSON.parse(userItem));
+    const localToken = localStorage.getItem("token");
+    if (localToken && typeof window.location !== undefined) {
+      const decodedToken: decodedTokenType = jwtDecode(localToken);
+      setToken(localToken);
+      setUser(decodedToken.data);
+    } else {
+      push("/login");
     }
   }, []);
 
@@ -48,9 +59,12 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       }),
     });
     if (response.ok) {
-      const user = await response.json();
-      localStorage.setItem("user", JSON.stringify(user));
-      if (user) {
+      const token = await response.json();
+      localStorage.setItem("token", token);
+      const decodedToken: decodedTokenType = jwtDecode(token);
+      setToken(token);
+      setUser(decodedToken.data);
+      if (token) {
         push("/");
       }
 
@@ -75,10 +89,13 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       }),
     });
     if (response.ok) {
-      const user = await response.json();
-      localStorage.setItem("user", JSON.stringify(user));
-      setUser(user);
-      if (user) {
+      const token = await response.json();
+      localStorage.setItem("token", token);
+      const decodedToken: decodedTokenType = jwtDecode(token);
+      setToken(token);
+      setUser(decodedToken.data);
+
+      if (token) {
         push("/");
       }
       toast.success("Signed up succesfully!");
@@ -91,6 +108,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     user,
     login,
     registeruser,
+    token,
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

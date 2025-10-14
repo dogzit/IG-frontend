@@ -14,8 +14,8 @@ const RemoveButton = () => {
       <path
         d="M28 12L12 28M12 12L28 28"
         stroke="#18181B"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
