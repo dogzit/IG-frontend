@@ -74,9 +74,9 @@ const Page = () => {
               alt="profile"
               className="rounded-full h-[45px] w-[45px] object-cover border border-gray-300"
             />
-            <Link href={`/profile/${post.user?._id!}`}>
+            <Link href={post.user ? `/profile/${post.user._id}` : "#"}>
               <div className="font-semibold text-gray-800 hover:underline">
-                {post.user?.username}
+                {post.user?.username ?? "Unknown User"}
               </div>
             </Link>
           </div>

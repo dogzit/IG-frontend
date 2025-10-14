@@ -97,7 +97,7 @@ const Page = () => {
         />
         <div>
           <div className="font-bold text-lg">{otherUser?.username}</div>
-          {otherUser?.followers.includes(user?._id!) ? (
+          {otherUser?.followers?.includes(user?._id ?? "") ? (
             <Button
               className="bg-white hover:bg-gray-200 text-[#4DB5F9] font-semibold hover:cursor-pointer"
               onClick={() => followUser()}
