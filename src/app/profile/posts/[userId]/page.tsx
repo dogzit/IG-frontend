@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Heart, MessageCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type UserType = {
   createdAt: Date;
@@ -32,6 +33,7 @@ type PostType = {
 };
 
 const Page = () => {
+  const { push } = useRouter();
   const params = useParams();
   const userId = params.userId;
   const { token, user } = useUser();
@@ -104,6 +106,10 @@ const Page = () => {
     );
   };
 
+  const pushToComment = (postId: string) => {
+    push(`/comment/${postId}`);
+  };
+
   return (
     <div>
       {posts?.map((post, index) => (
@@ -152,12 +158,13 @@ const Page = () => {
                 {post?.likes.length ?? 0} likes
               </div>
 
-              <Link href={`comment/${post._id}`}>
-                <MessageCircle className="w-5 h-5 text-gray-700 cursor-pointer hover:text-gray-900" />
-              </Link>
+              <MessageCircle
+                className="w-5 h-5 text-gray-700 cursor-pointer hover:text-gray-900"
+                onClick={() => pushToComment(post._id)}
+              />
             </div>
             <div className="text-gray-800 text-sm leading-snug">
-              <span className="font-semibold">{post.user?.username}</span>:{" "}
+              <span className="font-semibold">{post.user?.username}</span>{" "}
               {post.caption}
             </div>
           </div>

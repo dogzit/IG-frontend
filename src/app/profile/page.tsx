@@ -97,7 +97,6 @@ const Page = () => {
           post.postImages.map((image, i) => (
             <Link href={`/profile/posts`}>
               <img
-                key={`${index}-${i}`}
                 src={image}
                 alt="post"
                 className="w-full aspect-square object-cover hover:opacity-80 transition"

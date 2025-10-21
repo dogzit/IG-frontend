@@ -118,7 +118,7 @@ const Page = () => {
               </Link>
             </div>
             <div className="text-gray-800 text-sm leading-snug">
-              <span className="font-semibold">{post.user?.username}</span>:{" "}
+              <span className="font-semibold">{post.user?.username}</span>{" "}
               {post.caption}
             </div>
           </div>
