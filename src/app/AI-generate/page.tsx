@@ -35,7 +35,7 @@ const Page = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            authorization: `Bearer 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`,
+            authorization: `Bearer ${process.env.HF}`,
           },
           body: JSON.stringify({
             inputs: promt,
