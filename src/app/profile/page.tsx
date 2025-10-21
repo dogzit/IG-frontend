@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@/providers/AuthProvider";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type UserType = {
   createdAt: Date;
@@ -13,6 +14,7 @@ type UserType = {
   updatedAt: Date;
   username: string;
   profilePicture?: string;
+  _id: string;
 };
 
 type PostType = {
@@ -61,9 +63,11 @@ const Page = () => {
         />
         <div>
           <div className="font-bold text-lg">{user?.username}</div>
-          <Button className="font-semibold text-[black] hover:underline">
-            Edit profile
-          </Button>
+          <Link href={`/profile/editProfile`}>
+            <Button className="font-semibold text-[black] hover:underline">
+              Edit profile
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -91,12 +95,14 @@ const Page = () => {
       <div className="grid grid-cols-3 gap-1">
         {posts.map((post, index) =>
           post.postImages.map((image, i) => (
-            <img
-              key={`${index}-${i}`}
-              src={image}
-              alt="post"
-              className="w-full aspect-square object-cover hover:opacity-80 transition"
-            />
+            <Link href={`/profile/posts`}>
+              <img
+                key={`${index}-${i}`}
+                src={image}
+                alt="post"
+                className="w-full aspect-square object-cover hover:opacity-80 transition"
+              />
+            </Link>
           ))
         )}
       </div>

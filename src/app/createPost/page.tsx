@@ -5,6 +5,7 @@ import CreatePostIcon from "../images/createPostIcon";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Input } from "@/components/ui/input";
 
 const Page = () => {
   return (

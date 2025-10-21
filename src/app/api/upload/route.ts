@@ -1,5 +1,4 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
-
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request): Promise<NextResponse> {
@@ -9,14 +8,18 @@ export async function POST(request: Request): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
+
       onBeforeGenerateToken: async () => {
         return {
-          allowedContentTypes: ["image/jpeg", "image/png", "image/webp"],
+          allowedContentTypes: ["image/png", "image/jpeg", "image/webp"],
           addRandomSuffix: true,
-          tokenPayload: JSON.stringify({}),
+          token: process.env.BLOB_READ_WRITE_TOKEN!,
         };
       },
-      onUploadCompleted: async ({ blob, tokenPayload }) => {},
+
+      onUploadCompleted: async ({ blob, tokenPayload }) => {
+        console.log("Upload complete:", blob);
+      },
     });
 
     return NextResponse.json(jsonResponse);

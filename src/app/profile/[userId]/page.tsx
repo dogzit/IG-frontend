@@ -5,6 +5,7 @@ import { useUser } from "@/providers/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
+import Link from "next/link";
 type UserType = {
   createdAt: Date;
   followers: string[];
@@ -143,12 +144,14 @@ const Page = () => {
       <div className="grid grid-cols-3 gap-1">
         {posts.map((post, index) =>
           post.postImages.map((image, i) => (
-            <img
-              key={`${index}-${i}`}
-              src={image}
-              alt="post"
-              className="w-full aspect-square object-cover hover:opacity-80 transition"
-            />
+            <Link href={`/profile/posts/${userId}`}>
+              <img
+                key={`${index}-${i}`}
+                src={image}
+                alt="post"
+                className="w-full aspect-square object-cover hover:opacity-80 transition"
+              />
+            </Link>
           ))
         )}
       </div>

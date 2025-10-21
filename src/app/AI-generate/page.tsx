@@ -35,7 +35,7 @@ const Page = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            authorization: `Bearer ${process.env.HF}`,
+            authorization: `Bearer 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`,
           },
           body: JSON.stringify({
             inputs: promt,
@@ -53,6 +53,7 @@ const Page = () => {
         access: "public",
         handleUploadUrl: "/api/upload",
       });
+
       setImages(uploaded.url);
     } catch (err) {
       toast.error("Image generation failed ");

@@ -1,10 +1,13 @@
 "use client";
 
-import { useUser } from "@/providers/AuthProvider";
 import { useEffect, useState } from "react";
-import { Heart, MessageCircle } from "lucide-react";
+import { useUser } from "@/providers/AuthProvider";
+import { Button } from "@/components/ui/button";
+import { useParams } from "next/navigation";
+import { toast } from "sonner";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Heart, MessageCircle } from "lucide-react";
 
 type UserType = {
   createdAt: Date;
@@ -29,26 +32,64 @@ type PostType = {
 };
 
 const Page = () => {
-  const [posts, setPosts] = useState<PostType[]>([]);
+  const params = useParams();
+  const userId = params.userId;
   const { token, user } = useUser();
   const myid = user?._id;
+  const [posts, setPosts] = useState<PostType[]>([]);
+  const [otherUser, setOtherUser] = useState<UserType>();
 
-  const allPost = async () => {
-    const res = await fetch("https://ig-backend-jivs.onrender.com/post/get", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
-    });
+  const fetchUserPostData = async () => {
+    const response = await fetch(
+      `https://ig-backend-jivs.onrender.com/post/otherUser/${userId}`,
+      {
+        method: "GET",
+        headers: { authorization: `Bearer ${token}` },
+      }
+    );
+    const data = await response.json();
+    setPosts(data);
+  };
 
-    const response = await res.json();
-    setPosts(response);
+  const fetchUserData = async () => {
+    const response = await fetch(
+      `https://ig-backend-jivs.onrender.com/getOtherUserData/${userId}`,
+      {
+        method: "GET",
+        headers: { authorization: `Bearer ${token}` },
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    setOtherUser(data);
   };
 
   useEffect(() => {
-    if (token) allPost();
-  }, [token]);
+    if (token && userId) {
+      fetchUserPostData();
+      fetchUserData();
+    }
+  }, [token, userId]);
+
+  const followUser = async () => {
+    const res = await fetch(
+      `https://ig-backend-jivs.onrender.com/follow-toggle/${userId}`,
+      {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Content-type": "application/json",
+        },
+      }
+    );
+    if (res.ok) {
+      toast.success("amjilttai dagala");
+    } else {
+      toast.error("aldaa garlaa");
+    }
+    fetchUserData();
+  };
+  console.log(posts);
 
   const like = async (postId: string) => {
     await fetch(
@@ -61,11 +102,10 @@ const Page = () => {
         },
       }
     );
-    allPost();
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-6 pb-20">
+    <div>
       {posts?.map((post, index) => (
         <motion.div
           key={index}
@@ -83,11 +123,10 @@ const Page = () => {
               alt="profile"
               className="rounded-full h-[45px] w-[45px] object-cover border border-gray-300"
             />
-            <Link href={post.user ? `/profile/${post.user._id}` : "#"}>
-              <div className="font-semibold text-gray-800 hover:underline">
-                {post.user?.username ?? "Unknown User"}
-              </div>
-            </Link>
+
+            <div className="font-semibold text-gray-800 hover:underline">
+              {post.user?.username ?? "Unknown User"}
+            </div>
           </div>
           {post?.postImages?.[0] && (
             <img
@@ -127,5 +166,4 @@ const Page = () => {
     </div>
   );
 };
-
 export default Page;
