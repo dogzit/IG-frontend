@@ -35,7 +35,7 @@ const Page = () => {
 
   const fetchUserPostData = async () => {
     const response = await fetch(
-      `https://ig-backend-jivs.onrender.com/post/otherUser/${userId}`,
+      `http://localhost:6969/post/otherUser/${userId}`,
       {
         method: "GET",
         headers: { authorization: `Bearer ${token}` },
@@ -47,7 +47,7 @@ const Page = () => {
 
   const fetchUserData = async () => {
     const response = await fetch(
-      `https://ig-backend-jivs.onrender.com/getOtherUserData/${userId}`,
+      `http://localhost:6969/getOtherUserData/${userId}`,
       {
         method: "GET",
         headers: { authorization: `Bearer ${token}` },
@@ -66,16 +66,13 @@ const Page = () => {
   }, [token, userId]);
 
   const followUser = async () => {
-    const res = await fetch(
-      `https://ig-backend-jivs.onrender.com/follow-toggle/${userId}`,
-      {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${token}`,
-          "Content-type": "application/json",
-        },
-      }
-    );
+    const res = await fetch(`http://localhost:6969/follow-toggle/${userId}`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "Content-type": "application/json",
+      },
+    });
     if (res.ok) {
       toast.success("amjilttai dagala");
     } else {

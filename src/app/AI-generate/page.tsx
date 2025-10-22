@@ -27,67 +27,54 @@ const Page = () => {
   };
 
   const fetchdata = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(
-        "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${process.env.HF}`,
+    setLoading(true);
+    const response = await fetch(
+      "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${process.env.HF}`,
+        },
+        body: JSON.stringify({
+          inputs: promt,
+          parameters: {
+            negative_prompt: "blurry, bad quality, distorted ",
+            num_inference_steps: 20,
+            quidance_scale: 7.6,
           },
-          body: JSON.stringify({
-            inputs: promt,
-            parameters: {
-              negative_prompt: "blurry, bad quality, distorted ",
-              num_inference_steps: 20,
-              quidance_scale: 7.6,
-            },
-          }),
-        }
-      );
-      const blob = await response.blob();
-      const file = new File([blob], "generated.png", { type: "image/png" });
-      const uploaded = await upload(file.name, file, {
-        access: "public",
-        handleUploadUrl: "/api/upload",
-      });
+        }),
+      }
+    );
+    const blob = await response.blob();
+    const file = new File([blob], "generated.png", { type: "image/png" });
+    const uploaded = await upload(file.name, file, {
+      access: "public",
+      handleUploadUrl: "/api/upload",
+    });
 
-      setImages(uploaded.url);
-    } catch (err) {
-      toast.error("Image generation failed ");
-    } finally {
-      setLoading(false);
-    }
+    setImages(uploaded.url);
   };
 
   const createPost = async () => {
-    try {
-      setPosting(true);
-      const response = await fetch(
-        "https://ig-backend-jivs.onrender.com/post/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            image: [image],
-            caption: caption,
-          }),
-        }
-      );
+    setPosting(true);
+    const response = await fetch("http://localhost:6969/post/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        image: [image],
+        caption: caption,
+      }),
+    });
 
-      if (response.ok) {
-        router.push("/");
-        toast.success("Post амжилттай нэмлээ ✨");
-      } else {
-        toast.error("Sorry, unavailable to create post.");
-      }
-    } finally {
-      setPosting(false);
+    if (response.ok) {
+      router.push("/");
+      toast.success("Post амжилттай нэмлээ ✨");
+    } else {
+      toast.error("Sorry, unavailable to create post.");
     }
   };
 

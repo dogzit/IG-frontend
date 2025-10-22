@@ -42,20 +42,17 @@ const Page = () => {
   const [otherUser, setOtherUser] = useState<UserType>();
 
   const fetchUserPostData = async () => {
-    const response = await fetch(
-      `https://ig-backend-jivs.onrender.com/post/user`,
-      {
-        method: "GET",
-        headers: { authorization: `Bearer ${token}` },
-      }
-    );
+    const response = await fetch(`http://localhost:6969/post/user`, {
+      method: "GET",
+      headers: { authorization: `Bearer ${token}` },
+    });
     const data = await response.json();
     setPosts(data);
   };
 
   const fetchUserData = async () => {
     const response = await fetch(
-      `https://ig-backend-jivs.onrender.com/getOtherUserData/${userId}`,
+      `http://localhost:6969/getOtherUserData/${userId}`,
       {
         method: "GET",
         headers: { authorization: `Bearer ${token}` },
@@ -74,16 +71,13 @@ const Page = () => {
   }, [token, userId]);
 
   const followUser = async () => {
-    const res = await fetch(
-      `https://ig-backend-jivs.onrender.com/follow-toggle/${userId}`,
-      {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${token}`,
-          "Content-type": "application/json",
-        },
-      }
-    );
+    const res = await fetch(`http://localhost:6969/follow-toggle/${userId}`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "Content-type": "application/json",
+      },
+    });
     if (res.ok) {
       toast.success("amjilttai dagala");
     } else {
@@ -94,16 +88,13 @@ const Page = () => {
   console.log(posts);
 
   const like = async (postId: string) => {
-    await fetch(
-      `https://ig-backend-jivs.onrender.com/post/toggle-like/${postId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    await fetch(`http://localhost:6969/post/toggle-like/${postId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    });
   };
 
   const pushToComment = (postId: string) => {
