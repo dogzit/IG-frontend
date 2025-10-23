@@ -25,6 +25,7 @@ type decodedTokenType = {
   data: User;
 };
 export type User = {
+  bio: string;
   _id: string;
   username: string;
   email: string;

@@ -29,9 +29,11 @@ const Page = () => {
           </div>
         </motion.div>
 
-        <Button className="bg-[#4DB5F9] hover:bg-[#3aa7f5] text-white font-semibold px-6 py-2 rounded-2xl shadow-md transition">
-          Photo Library
-        </Button>
+        <Link href={"galleryImageAdd"}>
+          <Button className="bg-[#4DB5F9] hover:bg-[#3aa7f5] text-white font-semibold px-6 py-2 rounded-2xl shadow-md transition">
+            Photo Library
+          </Button>
+        </Link>
 
         <Link href="/AI-generate">
           <Button className="bg-white border border-[#4DB5F9] text-[#4DB5F9] hover:bg-blue-50 font-semibold px-6 py-2 rounded-2xl transition">

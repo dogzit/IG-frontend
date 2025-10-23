@@ -16,6 +16,7 @@ type UserType = {
   username: string;
   _id: string;
   profilePicture?: string;
+  bio: string;
 };
 
 type PostType = {
