@@ -8,17 +8,16 @@ export async function POST(request: Request): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
-
+      token: 'vercel_blob_rw_xmUZ7GF2pT8NCgnc_HZIAxcZ5Ey2UPydmdfYZ0ioF6Sfy7o',
       onBeforeGenerateToken: async () => {
         return {
-          allowedContentTypes: ["image/png", "image/jpeg", "image/webp"],
+          allowedContentTypes: ["image/jpeg", "image/png", "image/webp"],
           addRandomSuffix: true,
-          token: process.env.BLOB_READ_WRITE_TOKEN!,
+          tokenPayload: JSON.stringify({}),
         };
       },
-
       onUploadCompleted: async ({ blob, tokenPayload }) => {
-        console.log("Upload complete:", blob);
+        console.log("ajilaach", blob, tokenPayload);
       },
     });
 
@@ -30,3 +29,4 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
   }
 }
+ 

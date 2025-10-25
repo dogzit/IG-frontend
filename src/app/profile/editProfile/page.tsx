@@ -36,6 +36,7 @@ const Page = () => {
       const uploaded = await upload(file.name, file, {
         access: "public",
         handleUploadUrl: "/api/upload",
+
       });
 
       setImage(uploaded.url);

@@ -117,7 +117,7 @@ const Page = () => {
                 href={
                   post.user?._id === myid
                     ? "/profile"
-                    : `/profile/${post.user._id}`
+                    : `/profile/${post?.user?._id}`
                 }
               >
                 <div className="font-semibold text-gray-800 hover:underline">
@@ -125,7 +125,7 @@ const Page = () => {
                 </div>
               </Link>
 
-              {post.user._id === myid && (
+              {post?.user?._id === myid && (
                 <div className="relative">
                   <EllipsisVertical
                     className="text-gray-500 cursor-pointer"
