@@ -8,7 +8,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
-      token: 'vercel_blob_rw_xmUZ7GF2pT8NCgnc_HZIAxcZ5Ey2UPydmdfYZ0ioF6Sfy7o',
+      token: process.env.BLOB_SECRET_READ_WRITE_TOKEN,
       onBeforeGenerateToken: async () => {
         return {
           allowedContentTypes: ["image/jpeg", "image/png", "image/webp"],

@@ -33,7 +33,7 @@ type PostType = {
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6969";
 
 const Page = () => {
-  const { push, back } = useRouter();
+  const { push } = useRouter();
   const params = useParams();
   const userId = params?.userId as string;
   const { token, user } = useUser();
@@ -160,7 +160,7 @@ const Page = () => {
           <div className="flex items-center gap-3 p-3 border-b border-gray-100">
             <img
               src={
-                post.user?.profilePicture ??
+                otherUser?.profilePicture ??
                 "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg"
               }
               alt="profile"

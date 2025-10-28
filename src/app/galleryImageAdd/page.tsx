@@ -14,45 +14,53 @@ import { Input } from "@/components/ui/input";
 const Page = () => {
   const [caption, setCaption] = useState("");
   const [posting, setPosting] = useState(false);
-  const [image, setImage] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [images, setImages] = useState<string[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
 
   const { token } = useUser();
   const { push } = useRouter();
 
+  // Олон зураг сонгох
   const handleFile = (e: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (!selectedFile) return;
-    setFile(selectedFile);
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length === 0) return;
+    setFiles(selectedFiles);
   };
 
-  const uploadImage = async () => {
-    if (!file) {
-      toast.warning("Please select an image first.");
+  // Олон зураг дарааллаар upload хийх
+  const uploadImages = async () => {
+    if (files.length === 0) {
+      toast.warning("Please select one or more images first.");
       return;
     }
 
     try {
       setUploading(true);
-      const uploaded = await upload(file.name, file, {
-        access: "public",
-        handleUploadUrl: "/api/upload",
-      });
+      const uploadedUrls: string[] = [];
 
-      setImage(uploaded.url);
-      toast.success("Image uploaded successfully!");
+      for (const file of files) {
+        const uploaded = await upload(file.name, file, {
+          access: "public",
+          handleUploadUrl: "/api/upload",
+        });
+        uploadedUrls.push(uploaded.url);
+      }
+
+      setImages(uploadedUrls);
+      toast.success("All images uploaded successfully!");
     } catch (error) {
       console.error(error);
-      toast.error("Image upload failed.");
+      toast.error("Failed to upload one or more images.");
     } finally {
       setUploading(false);
     }
   };
 
+  // POST үүсгэх
   const createPost = async () => {
-    if (!image) {
-      toast.warning("Please upload an image before posting.");
+    if (images.length === 0) {
+      toast.warning("Please upload at least one image before posting.");
       return;
     }
 
@@ -71,7 +79,7 @@ const Page = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          image: [image],
+          image: images,
           caption,
         }),
       });
@@ -108,11 +116,17 @@ const Page = () => {
             placeholder="Write caption here"
             className="max-w-sm"
           />
-          <Input type="file" accept="image/*" onChange={handleFile} />
+
+          <Input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFile}
+          />
 
           <Button
-            onClick={uploadImage}
-            disabled={uploading || !file}
+            onClick={uploadImages}
+            disabled={uploading || files.length === 0}
             className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-xl shadow-md transition duration-300 flex items-center gap-2"
           >
             {uploading ? (
@@ -120,13 +134,13 @@ const Page = () => {
                 <Loader2 className="h-4 w-4 animate-spin" /> Uploading...
               </>
             ) : (
-              "Upload"
+              "Upload Images"
             )}
           </Button>
 
           <Button
             onClick={createPost}
-            disabled={posting || !image}
+            disabled={posting || images.length === 0}
             className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-2 rounded-xl shadow-md transition duration-300 flex items-center gap-2"
           >
             {posting ? (
@@ -139,13 +153,16 @@ const Page = () => {
           </Button>
         </div>
 
-        {image && (
-          <div className="flex justify-center p-4">
-            <img
-              src={image}
-              alt="Preview"
-              className="rounded-2xl shadow-xl border border-gray-200 max-w-md animate-fadeIn"
-            />
+        {images.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 justify-center p-4">
+            {images.map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                alt={`Preview ${i + 1}`}
+                className="rounded-xl shadow-md border border-gray-200 max-h-48 object-cover animate-fadeIn"
+              />
+            ))}
           </div>
         )}
       </div>

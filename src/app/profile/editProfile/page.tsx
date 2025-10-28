@@ -10,14 +10,16 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
 const Page = () => {
-  const { token } = useUser();
+  const { token, user } = useUser();
   const { push } = useRouter();
 
   const [image, setImage] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [usernameValue, setUsernameValue] = useState("");
-  const [bioValue, setBioValue] = useState("");
+
+  
+const [usernameValue, setUsernameValue] = useState(user?.username || "");
+const [bioValue, setBioValue] = useState(user?.bio || "");
 
   const handleFile = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -48,33 +50,33 @@ const Page = () => {
       setUploading(false);
     }
   };
+const saveChanges = async () => {
+  try {
+    const response = await fetch(`http://localhost:6969/editProfile`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        bio: bioValue || user?.bio, 
+        username: usernameValue || user?.username, 
+        profilePicture: image || user?.profilePicture,
+      }),
+    });
 
-  const saveChanges = async () => {
-    try {
-      const response = await fetch(`http://localhost:6969/editProfile`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          bio: bioValue,
-          username: usernameValue,
-          profilePicture: image,
-        }),
-      });
-
-      if (response.ok) {
-        toast.success("User profile updated successfully!");
-        push("/profile");
-      } else {
-        toast.error("Failed to update user profile.");
-      }
-    } catch (err) {
-      toast.error("An error occurred while saving changes.");
-      console.error(err);
+    if (response.ok) {
+      toast.success("User profile updated successfully!");
+      push("/profile");
+    } else {
+      toast.error("Failed to update user profile.");
     }
-  };
+  } catch (err) {
+    toast.error("An error occurred while saving changes.");
+    console.error(err);
+  }
+};
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">

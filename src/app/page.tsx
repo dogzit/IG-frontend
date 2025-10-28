@@ -6,6 +6,18 @@ import { Heart, MessageCircle, EllipsisVertical } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import * as React from "react"
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+
+
+
 type UserType = {
   createdAt: Date;
   email: string;
@@ -162,13 +174,27 @@ const Page = () => {
             </div>
           </div>
 
-          {post?.postImages?.[0] && (
+         {post?.postImages && post.postImages.length > 0 && (
+  <Carousel className="w-full">
+    <CarouselContent>
+      {post.postImages.map((img, i) => (
+        <CarouselItem key={i} className="flex justify-center">
+          <div className="p-1 flex justify-center">
             <img
-              src={post.postImages[0]}
-              alt="post"
-              className="w-full h-auto object-cover"
+              src={img}
+              alt={`Post image ${i + 1}`}
+              className="rounded-lg object-cover max-h-[500px] w-full"
             />
-          )}
+          </div>
+        </CarouselItem>
+      ))}
+    </CarouselContent>
+    
+  </Carousel>
+)}
+
+
+
 
           <div className="p-3">
             <div className="flex items-center gap-3 mb-2">

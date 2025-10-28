@@ -35,11 +35,11 @@ const Page = () => {
           </Button>
         </Link>
 
-        <Link href="/AI-generate">
+        {/* <Link href="/AI-generate">
           <Button className="bg-white border border-[#4DB5F9] text-[#4DB5F9] hover:bg-blue-50 font-semibold px-6 py-2 rounded-2xl transition">
             Generate with AI
           </Button>
-        </Link>
+        </Link> */}
       </div>
     </div>
   );
