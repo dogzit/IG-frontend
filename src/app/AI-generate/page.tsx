@@ -58,7 +58,7 @@ const Page = () => {
 
   const createPost = async () => {
     setPosting(true);
-    const response = await fetch("http://localhost:6969/post/create", {
+    const response = await fetch("https://ig-backend-qfjz.onrender.com/post/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

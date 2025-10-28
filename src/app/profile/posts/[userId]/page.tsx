@@ -30,7 +30,7 @@ type PostType = {
   _id: string;
 };
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6969";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://ig-backend-qfjz.onrender.com";
 
 const Page = () => {
   const { push } = useRouter();

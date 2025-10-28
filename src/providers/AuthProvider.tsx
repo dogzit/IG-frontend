@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await fetch("http://localhost:6969/login", {
+    const response = await fetch("https://ig-backend-qfjz.onrender.com/login", {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     password: string,
     username: string
   ) => {
-    const response = await fetch("http://localhost:6969/sign_up", {
+    const response = await fetch("https://ig-backend-qfjz.onrender.com/sign_up", {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({

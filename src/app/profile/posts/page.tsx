@@ -46,7 +46,7 @@ const Page = () => {
 
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:6969/post/user`, {
+      const res = await fetch(`https://ig-backend-qfjz.onrender.com/post/user`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -77,7 +77,7 @@ const Page = () => {
     if (!token) return toast.error("Please log in first!");
 
     try {
-      const res = await fetch(`http://localhost:6969/post/toggle-like/${postId}`, {
+      const res = await fetch(`https://ig-backend-qfjz.onrender.com/post/toggle-like/${postId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

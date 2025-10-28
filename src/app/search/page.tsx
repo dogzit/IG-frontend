@@ -19,7 +19,7 @@ const Page = () => {
   const { token } = useUser();
 
   const fetchUserData = async () => {
-    const response = await fetch("http://localhost:6969/getUserData", {
+    const response = await fetch("https://ig-backend-qfjz.onrender.com/getUserData", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

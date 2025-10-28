@@ -56,7 +56,7 @@ const Page = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:6969/comment/create", {
+      const response = await fetch("https://ig-backend-qfjz.onrender.com/comment/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,7 +85,7 @@ const Page = () => {
   const fetchComment = async () => {
     try {
       const response = await fetch(
-        `http://localhost:6969/comment/get/${postId}`,
+        `https://ig-backend-qfjz.onrender.com/comment/get/${postId}`,
         {
           method: "GET",
           headers: {
@@ -113,7 +113,7 @@ const Page = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:6969/comment/delete/${commentId}`,
+        `https://ig-backend-qfjz.onrender.com/comment/delete/${commentId}`,
         {
           method: "DELETE",
           headers: { authorization: `Bearer ${token}` },

@@ -52,7 +52,7 @@ const [bioValue, setBioValue] = useState(user?.bio || "");
   };
 const saveChanges = async () => {
   try {
-    const response = await fetch(`http://localhost:6969/editProfile`, {
+    const response = await fetch(`https://ig-backend-qfjz.onrender.com/editProfile`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

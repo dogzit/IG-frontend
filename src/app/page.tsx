@@ -51,7 +51,7 @@ const Page = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const allPost = async () => {
-    const res = await fetch("http://localhost:6969/post/get", {
+    const res = await fetch("https://ig-backend-qfjz.onrender.com/post/get", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -76,7 +76,7 @@ const Page = () => {
   }, [token]);
 
   const like = async (postId: string) => {
-    await fetch(`http://localhost:6969/post/toggle-like/${postId}`, {
+    await fetch(`https://ig-backend-qfjz.onrender.com/post/toggle-like/${postId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -87,7 +87,7 @@ const Page = () => {
   };
 
   const handleDelete = async (postId: string) => {
-    const res = await fetch(`http://localhost:6969/post/delete/${postId}`, {
+    const res = await fetch(`https://ig-backend-qfjz.onrender.com/post/delete/${postId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

@@ -21,14 +21,14 @@ const Page = () => {
   const { token } = useUser();
   const { push } = useRouter();
 
-  // Олон зураг сонгох
+
   const handleFile = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
     if (selectedFiles.length === 0) return;
     setFiles(selectedFiles);
   };
 
-  // Олон зураг дарааллаар upload хийх
+
   const uploadImages = async () => {
     if (files.length === 0) {
       toast.warning("Please select one or more images first.");
@@ -72,7 +72,7 @@ const Page = () => {
     try {
       setPosting(true);
 
-      const response = await fetch("http://localhost:6969/post/create", {
+      const response = await fetch("https://ig-backend-qfjz.onrender.com/post/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

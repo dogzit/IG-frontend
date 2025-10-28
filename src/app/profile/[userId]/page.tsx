@@ -42,7 +42,7 @@ const Page = () => {
   const fetchUserPostData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:6969/post/otherUser/${userId}`,
+        `https://ig-backend-qfjz.onrender.com/post/otherUser/${userId}`,
         {
           method: "GET",
           headers: { authorization: `Bearer ${token}` },
@@ -61,7 +61,7 @@ const Page = () => {
   const fetchUserData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:6969/getOtherUserData/${userId}`,
+        `https://ig-backend-qfjz.onrender.com/getOtherUserData/${userId}`,
         {
           method: "GET",
           headers: { authorization: `Bearer ${token}` },
@@ -85,7 +85,7 @@ const Page = () => {
 
   const followUser = async () => {
     try {
-      const res = await fetch(`http://localhost:6969/follow-toggle/${userId}`, {
+      const res = await fetch(`https://ig-backend-qfjz.onrender.com/follow-toggle/${userId}`, {
         method: "POST",
         headers: {
           authorization: `Bearer ${token}`,
