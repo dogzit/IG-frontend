@@ -13,6 +13,14 @@ const Page = () => {
   const { registeruser, token } = useUser();
   const { push } = useRouter();
 
+  const [InputValues, setInputValues] = useState({
+    email: "",
+    password: "",
+    username: "",
+  });
+
+  const [loading, setLoading] = useState(false); // 👈 нэмсэн state
+
   useEffect(() => {
     if (token) {
       push("/");
@@ -20,46 +28,28 @@ const Page = () => {
   }, [token]);
 
   const handleregisteruser = async () => {
-    const email = InputValues.email;
-    const password = InputValues.password;
-    const username = InputValues.username;
+    if (loading) return; // 👈 аль хэдийн ажиллаж байвал давхар дарахгүй
+    setLoading(true);
+
+    const { email, password, username } = InputValues;
     await registeruser(email, password, username);
+
+    setLoading(false);
+
     if (token) {
       push("/");
     }
   };
 
-  const [InputValues, setInputValues] = useState({
-    email: "",
-    password: "",
-    username: "",
-  });
   const handleValues = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    if (name === "email") {
-      setInputValues((prev) => {
-        return { ...prev, email: value };
-      });
-    }
-    if (name === "password") {
-      setInputValues((prev) => {
-        return { ...prev, password: value };
-      });
-    }
-    if (name === "username") {
-      setInputValues((prev) => {
-        return { ...prev, username: value };
-      });
-    }
+    setInputValues((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white">
       <img src={igIcon.src} alt="Instagram" className="h-16 w-16 mb-6" />
-      <div
-        className="text-[#71717A] font-bold text-[16px] justify-center
-          width-[350px]"
-      >
+      <div className="text-[#71717A] font-bold text-[16px] justify-center width-[350px]">
         Sign up to see photos and videos from your friends
       </div>
 
@@ -67,28 +57,30 @@ const Page = () => {
         <div className="flex flex-col gap-3">
           <Input
             placeholder="Email"
-            onChange={(e) => handleValues(e)}
+            onChange={handleValues}
             name="email"
+            disabled={loading}
           />
           <Input
             placeholder="Password"
             type="password"
-            onChange={(e) => handleValues(e)}
+            onChange={handleValues}
             name="password"
+            disabled={loading}
           />
-
           <Input
             placeholder="Username"
-            type="Username"
-            onChange={(e) => handleValues(e)}
+            onChange={handleValues}
             name="username"
+            disabled={loading}
           />
 
           <Button
-            className="bg-[#4DB5F9] hover:bg-[#3aa7f5] text-white font-semibold hover:cursor-pointer"
-            onClick={() => handleregisteruser()}
+            className="bg-[#4DB5F9] hover:bg-[#3aa7f5] text-white font-semibold hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handleregisteruser}
+            disabled={loading} // 👈 товчийг идэвхгүй болгож байна
           >
-            Sign up
+            {loading ? "Signing up..." : "Sign up"} {/* 👈 текст өөрчлөгдөнө */}
           </Button>
 
           <div className="flex items-center gap-3">

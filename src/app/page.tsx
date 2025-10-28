@@ -6,17 +6,15 @@ import { Heart, MessageCircle, EllipsisVertical } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-import * as React from "react"
-import { Card, CardContent } from "@/components/ui/card"
+import * as React from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"
-
-
+} from "@/components/ui/carousel";
 
 type UserType = {
   createdAt: Date;
@@ -50,6 +48,14 @@ const Page = () => {
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
+  // 👇 массивийг random-оор холих туслах функц
+  const shuffleArray = (array: any[]) => {
+    return array
+      .map((value) => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
+  };
+
   const allPost = async () => {
     const res = await fetch("https://ig-backend-qfjz.onrender.com/post/get", {
       method: "GET",
@@ -60,10 +66,12 @@ const Page = () => {
     });
 
     const response = await res.json();
+
+    // 👇 хариуг шалгаад random-оор холино
     if (Array.isArray(response)) {
-      setPosts(response);
+      setPosts(shuffleArray(response));
     } else if (Array.isArray(response.posts)) {
-      setPosts(response.posts);
+      setPosts(shuffleArray(response.posts));
     } else {
       setPosts([]);
     }
@@ -76,25 +84,31 @@ const Page = () => {
   }, [token]);
 
   const like = async (postId: string) => {
-    await fetch(`https://ig-backend-qfjz.onrender.com/post/toggle-like/${postId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
-    });
+    await fetch(
+      `https://ig-backend-qfjz.onrender.com/post/toggle-like/${postId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
     allPost();
   };
 
   const handleDelete = async (postId: string) => {
-    const res = await fetch(`https://ig-backend-qfjz.onrender.com/post/delete/${postId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ postId }),
-    });
+    const res = await fetch(
+      `https://ig-backend-qfjz.onrender.com/post/delete/${postId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ postId }),
+      }
+    );
 
     if (res.ok) {
       setConfirmDeleteOpen(false);
@@ -174,27 +188,23 @@ const Page = () => {
             </div>
           </div>
 
-         {post?.postImages && post.postImages.length > 0 && (
-  <Carousel className="w-full">
-    <CarouselContent>
-      {post.postImages.map((img, i) => (
-        <CarouselItem key={i} className="flex justify-center">
-          <div className="p-1 flex justify-center">
-            <img
-              src={img}
-              alt={`Post image ${i + 1}`}
-              className="rounded-lg object-cover max-h-[500px] w-full"
-            />
-          </div>
-        </CarouselItem>
-      ))}
-    </CarouselContent>
-    
-  </Carousel>
-)}
-
-
-
+          {post?.postImages && post.postImages.length > 0 && (
+            <Carousel className="w-full">
+              <CarouselContent>
+                {post.postImages.map((img, i) => (
+                  <CarouselItem key={i} className="flex justify-center">
+                    <div className="p-1 flex justify-center">
+                      <img
+                        src={img}
+                        alt={`Post image ${i + 1}`}
+                        className="rounded-lg object-cover max-h-[500px] w-full"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          )}
 
           <div className="p-3">
             <div className="flex items-center gap-3 mb-2">
