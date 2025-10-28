@@ -7,13 +7,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 import * as React from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 
 type UserType = {
@@ -39,7 +36,15 @@ type PostType = {
   _id: string;
 };
 
-const Page = () => {
+// ✅ random хольдог функцийн type тодорхой болгосон хувилбар
+const shuffleArray = <T,>(array: T[]): T[] => {
+  return array
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+};
+
+const Page: React.FC = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
   const { token, user } = useUser();
   const myid = user?._id;
@@ -48,31 +53,27 @@ const Page = () => {
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
-  // 👇 массивийг random-оор холих туслах функц
-  const shuffleArray = (array: any[]) => {
-    return array
-      .map((value) => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
-  };
+  const allPost = async (): Promise<void> => {
+    try {
+      const res = await fetch("https://ig-backend-qfjz.onrender.com/post/get", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      });
 
-  const allPost = async () => {
-    const res = await fetch("https://ig-backend-qfjz.onrender.com/post/get", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
-    });
+      const response = await res.json();
 
-    const response = await res.json();
-
-    // 👇 хариуг шалгаад random-оор холино
-    if (Array.isArray(response)) {
-      setPosts(shuffleArray(response));
-    } else if (Array.isArray(response.posts)) {
-      setPosts(shuffleArray(response.posts));
-    } else {
+      if (Array.isArray(response)) {
+        setPosts(shuffleArray<PostType>(response));
+      } else if (Array.isArray(response.posts)) {
+        setPosts(shuffleArray<PostType>(response.posts));
+      } else {
+        setPosts([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch posts:", error);
       setPosts([]);
     }
   };
@@ -83,7 +84,7 @@ const Page = () => {
     }
   }, [token]);
 
-  const like = async (postId: string) => {
+  const like = async (postId: string): Promise<void> => {
     await fetch(
       `https://ig-backend-qfjz.onrender.com/post/toggle-like/${postId}`,
       {
@@ -97,7 +98,7 @@ const Page = () => {
     allPost();
   };
 
-  const handleDelete = async (postId: string) => {
+  const handleDelete = async (postId: string): Promise<void> => {
     const res = await fetch(
       `https://ig-backend-qfjz.onrender.com/post/delete/${postId}`,
       {
@@ -188,7 +189,7 @@ const Page = () => {
             </div>
           </div>
 
-          {post?.postImages && post.postImages.length > 0 && (
+          {post?.postImages?.length > 0 && (
             <Carousel className="w-full">
               <CarouselContent>
                 {post.postImages.map((img, i) => (
@@ -221,7 +222,7 @@ const Page = () => {
               </motion.div>
 
               <div className="text-gray-700 font-medium text-sm">
-                {post?.likes.length ?? 0} likes
+                {post.likes.length} likes
               </div>
 
               <Link href={`comment/${post._id}`}>
