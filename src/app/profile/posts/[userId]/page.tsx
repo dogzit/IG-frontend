@@ -8,15 +8,15 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Heart, MessageCircle } from "lucide-react";
 
-import * as React from "react"
-import { Card, CardContent } from "@/components/ui/card"
+import * as React from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"
+} from "@/components/ui/carousel";
 type UserType = {
   createdAt: Date;
   email: string;
@@ -39,7 +39,8 @@ type PostType = {
   _id: string;
 };
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://ig-backend-qfjz.onrender.com";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://ig-backend-qfjz.onrender.com";
 
 const Page = () => {
   const { push } = useRouter();
@@ -50,6 +51,14 @@ const Page = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
   const [otherUser, setOtherUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const [currentIndexes, setCurrentIndexes] = useState<Record<string, number>>(
+    {}
+  );
+
+  const handleSlideChange = (postId: string, index: number) => {
+    setCurrentIndexes((prev) => ({ ...prev, [postId]: index }));
+  };
 
   const fetchUserPostData = useCallback(async () => {
     try {
@@ -180,23 +189,39 @@ const Page = () => {
             </div>
           </div>
 
-           {post?.postImages && post.postImages.length > 0 && (
-            <Carousel className="w-full">
-              <CarouselContent>
-                {post.postImages.map((img, i) => (
-                  <CarouselItem key={i} className="flex justify-center">
-                    <div className="p-1 flex justify-center">
-                      <img
-                        src={img}
-                        alt={`Post image ${i + 1}`}
-                        className="rounded-lg object-cover max-h-[500px] w-full"
-                      />
-                    </div>
-                  </CarouselItem>
+          {post?.postImages?.length > 0 && (
+            <div className="relative">
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {post.postImages.map((img, i) => (
+                    <CarouselItem key={i} className="flex justify-center">
+                      <div className="p-1 flex justify-center">
+                        <img
+                          src={img}
+                          alt={`Post image ${i + 1}`}
+                          className="rounded-lg object-cover max-h-[500px] w-full"
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+
+              {/* ✅ Dots Indicator */}
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                {post.postImages.map((_, dotIndex) => (
+                  <div
+                    key={dotIndex}
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                      // show filled dot if it's the current active image
+                      dotIndex === currentIndexes[post._id]
+                        ? "bg-white"
+                        : "bg-white/50"
+                    }`}
+                  />
                 ))}
-              </CarouselContent>
-              
-            </Carousel>
+              </div>
+            </div>
           )}
 
           <div className="p-3">

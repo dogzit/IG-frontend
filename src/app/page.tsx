@@ -53,6 +53,14 @@ const Page: React.FC = () => {
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
+  const [currentIndexes, setCurrentIndexes] = useState<Record<string, number>>(
+    {}
+  );
+
+  const handleSlideChange = (postId: string, index: number) => {
+    setCurrentIndexes((prev) => ({ ...prev, [postId]: index }));
+  };
+
   const allPost = async (): Promise<void> => {
     try {
       const res = await fetch("https://ig-backend-qfjz.onrender.com/post/get", {
@@ -190,21 +198,36 @@ const Page: React.FC = () => {
           </div>
 
           {post?.postImages?.length > 0 && (
-            <Carousel className="w-full">
-              <CarouselContent>
-                {post.postImages.map((img, i) => (
-                  <CarouselItem key={i} className="flex justify-center">
-                    <div className="p-1 flex justify-center">
-                      <img
-                        src={img}
-                        alt={`Post image ${i + 1}`}
-                        className="rounded-lg object-cover max-h-[500px] w-full"
-                      />
-                    </div>
-                  </CarouselItem>
+            <div className="relative">
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {post.postImages.map((img, i) => (
+                    <CarouselItem key={i} className="flex justify-center">
+                      <div className="p-1 flex justify-center">
+                        <img
+                          src={img}
+                          alt={`Post image ${i + 1}`}
+                          className="rounded-lg object-cover max-h-[500px] w-full"
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                {post.postImages.map((_, dotIndex) => (
+                  <div
+                    key={dotIndex}
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                      dotIndex === currentIndexes[post._id]
+                        ? "bg-white"
+                        : "bg-white/50"
+                    }`}
+                  />
                 ))}
-              </CarouselContent>
-            </Carousel>
+              </div>
+            </div>
           )}
 
           <div className="p-3">

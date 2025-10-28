@@ -7,15 +7,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Heart, MessageCircle } from "lucide-react";
-import * as React from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
+import * as React from "react";
+import useEmblaCarousel from "embla-carousel-react";
+
+import type { EmblaCarouselType } from "embla-carousel";
+
 type UserType = {
   createdAt: Date;
   email: string;
@@ -38,7 +34,64 @@ type PostType = {
   _id: string;
 };
 
+type EmblaCarouselProps = {
+  post: PostType;
+};
 
+const EmblaCarousel: React.FC<EmblaCarouselProps> = ({ post }) => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    emblaApi.on("select", onSelect);
+
+    onSelect(emblaApi);
+
+    return () => {
+      emblaApi.off("select", onSelect);
+    };
+  }, [emblaApi, onSelect]);
+
+  const images = post.postImages;
+  if (images.length === 0) return null;
+
+  return (
+    <div className="relative">
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex">
+          {images.map((img, i) => (
+            <div key={i} className="flex-[0_0_100%] min-w-0">
+              <img
+                src={img}
+                alt={`Post image ${i + 1}`}
+                className="object-cover w-full aspect-square"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {images.length > 1 && (
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+          {images.map((_, i) => (
+            <div
+              key={i}
+              className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                i === selectedIndex ? "bg-white" : "bg-white/40"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Page = () => {
   const { push } = useRouter();
@@ -48,19 +101,21 @@ const Page = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
   const [loading, setLoading] = useState(true);
 
-
   const fetchUserPosts = useCallback(async () => {
     if (!token) return;
 
     try {
       setLoading(true);
-      const res = await fetch(`https://ig-backend-qfjz.onrender.com/post/user`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `https://ig-backend-qfjz.onrender.com/post/user`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!res.ok) throw new Error("Failed to fetch posts");
 
@@ -75,40 +130,55 @@ const Page = () => {
   }, [token]);
 
   useEffect(() => {
-    if (token) {
-      fetchUserPosts();
-    }
+    if (token) fetchUserPosts();
   }, [token, fetchUserPosts]);
-
 
   const toggleLike = async (postId: string) => {
     if (!token) return toast.error("Please log in first!");
 
+    const isLiked = posts.find((p) => p._id === postId)?.likes.includes(myId!);
+    setPosts((prev) =>
+      prev.map((post) =>
+        post._id === postId
+          ? {
+              ...post,
+              likes: isLiked
+                ? post.likes.filter((id) => id !== myId)
+                : [...post.likes, myId!],
+            }
+          : post
+      )
+    );
+
     try {
-      const res = await fetch(`https://ig-backend-qfjz.onrender.com/post/toggle-like/${postId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) throw new Error("Failed to toggle like");
-
-      setPosts((prev) =>
-        prev.map((post) =>
-          post._id === postId
-            ? {
-                ...post,
-                likes: post.likes.includes(myId!)
-                  ? post.likes.filter((id) => id !== myId)
-                  : [...post.likes, myId!],
-              }
-            : post
-        )
+      const res = await fetch(
+        `https://ig-backend-qfjz.onrender.com/post/toggle-like/${postId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+        }
       );
 
-      toast.success("You toggled like ❤️");
+      if (!res.ok) {
+        setPosts((prev) =>
+          prev.map((post) =>
+            post._id === postId
+              ? {
+                  ...post,
+                  likes: isLiked
+                    ? [...post.likes, myId!]
+                    : post.likes.filter((id) => id !== myId),
+                }
+              : post
+          )
+        );
+        throw new Error("Failed to toggle like");
+      }
+
+      toast.success(isLiked ? "Unliked 💔" : "Liked ❤️");
     } catch (err) {
       console.error(err);
       toast.error("Could not like post 😢");
@@ -117,14 +187,13 @@ const Page = () => {
 
   const goToComment = (postId: string) => push(`/comment/${postId}`);
 
-
   if (loading)
     return <div className="text-center py-8 text-gray-500">Loading...</div>;
 
   return (
     <div className="max-w-lg mx-auto">
       {user && (
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 p-3">
           <div className="flex items-center gap-3">
             <img
               src={
@@ -163,35 +232,18 @@ const Page = () => {
             <div className="flex items-center gap-3 p-3 border-b border-gray-100">
               <img
                 src={
-                  user?.profilePicture ??
+                  post.user?.profilePicture ??
                   "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg"
                 }
                 alt="profile"
                 className="rounded-full h-[45px] w-[45px] object-cover border border-gray-300"
               />
               <div className="font-semibold text-gray-800 hover:underline">
-                {user?.username ?? "Unknown User"}
+                {post.user?.username ?? "Unknown User"}
               </div>
             </div>
 
-             {post?.postImages && post.postImages.length > 0 && (
-  <Carousel className="w-full">
-    <CarouselContent>
-      {post.postImages.map((img, i) => (
-        <CarouselItem key={i} className="flex justify-center">
-          <div className="p-1 flex justify-center">
-            <img
-              src={img}
-              alt={`Post image ${i + 1}`}
-              className="rounded-lg object-cover max-h-[500px] w-full"
-            />
-          </div>
-        </CarouselItem>
-      ))}
-    </CarouselContent>
-    
-  </Carousel>
-)}
+            {post?.postImages?.length > 0 && <EmblaCarousel post={post} />}
 
             <div className="p-3">
               <div className="flex items-center gap-3 mb-2">
@@ -203,7 +255,7 @@ const Page = () => {
                   {post.likes.includes(myId!) ? (
                     <Heart color="red" fill="red" className="w-6 h-6" />
                   ) : (
-                    <Heart className="w-6 h-6" />
+                    <Heart className="w-6 h-6 text-gray-700" />
                   )}
                 </motion.div>
 
@@ -212,13 +264,13 @@ const Page = () => {
                 </div>
 
                 <MessageCircle
-                  className="w-5 h-5 text-gray-700 cursor-pointer hover:text-gray-900"
+                  className="w-6 h-6 text-gray-700 cursor-pointer hover:text-gray-900"
                   onClick={() => goToComment(post._id)}
                 />
               </div>
 
               <div className="text-gray-800 text-sm leading-snug">
-                <span className="font-semibold">{user?.username}</span>{" "}
+                <span className="font-semibold">{post.user?.username}</span>{" "}
                 {post.caption}
               </div>
             </div>
