@@ -39,7 +39,10 @@ const Page = () => {
       setLoading(true);
       const response = await fetch("/api/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ prompt }),
       });
 
