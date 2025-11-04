@@ -4,35 +4,40 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUser } from "@/providers/AuthProvider";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
 const Page = () => {
+  const { back } = useRouter();
+
   const params = useParams();
   const postId = params.postId;
   const { token } = useUser();
   const [commentValue, setCommentValue] = useState("");
   const [comments, setComments] = useState<any[]>([]);
-
+  console.log(comments);
   const createComment = async () => {
     if (!commentValue.trim()) {
       toast.error("Comment cannot be empty!");
       return;
     }
 
-    const response = await fetch("http://localhost:6969/comment/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        comment: commentValue,
-        postId: postId,
-      }),
-    });
+    const response = await fetch(
+      "https://ig-backend-qfjz.onrender.com/comment/create",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          comment: commentValue,
+          postId: postId,
+        }),
+      }
+    );
 
     if (response.ok) {
       toast.success("Comment added successfully!");
@@ -49,7 +54,7 @@ const Page = () => {
 
   const fetchComment = async () => {
     const response = await fetch(
-      `http://localhost:6969/comment/get/${postId}`,
+      `https://ig-backend-qfjz.onrender.com/comment/get/${postId}`,
       {
         method: "GET",
         headers: {
@@ -68,6 +73,9 @@ const Page = () => {
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-4">
+      <Button onClick={back} className="bg-gray-400">
+        {"<"}
+      </Button>
       <Card className="p-4 shadow-lg border border-gray-200">
         <CardHeader>
           <CardTitle className="text-xl font-semibold text-gray-800">
@@ -96,7 +104,6 @@ const Page = () => {
         {comments.length === 0 && (
           <p className="text-center text-gray-500 mt-6">No comments yet 😢</p>
         )}
-
         {comments.map((comment: any, i: number) => (
           <motion.div
             key={i}

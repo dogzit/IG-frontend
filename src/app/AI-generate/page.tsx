@@ -1,4 +1,5 @@
 "use client";
+
 import RemoveButton from "@/app/images/X buttonIcon";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,50 +14,50 @@ import { Loader2 } from "lucide-react";
 const Page = () => {
   const { token } = useUser();
   const router = useRouter();
+
   const [caption, setCaption] = useState("");
-  const [promt, setPromt] = useState("");
-  const [image, setImages] = useState("");
+  const [prompt, setPrompt] = useState("");
+  const [image, setImage] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [posting, setPosting] = useState(false);
 
-  const handleValues = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setPromt(event.target.value);
+  const handlePromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setPrompt(event.target.value);
   };
-  const handleCaption = (event: ChangeEvent<HTMLTextAreaElement>) => {
+
+  const handleCaptionChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setCaption(event.target.value);
   };
 
-  const fetchdata = async () => {
+  const fetchData = async () => {
     try {
+      if (!prompt.trim()) {
+        toast.error("Please enter a prompt!");
+        return;
+      }
+
       setLoading(true);
-      const response = await fetch(
-        "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer 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`,
-          },
-          body: JSON.stringify({
-            inputs: promt,
-            parameters: {
-              negative_prompt: "blurry, bad quality, distorted ",
-              num_inference_steps: 20,
-              quidance_scale: 7.6,
-            },
-          }),
-        }
-      );
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!response.ok) throw new Error("Failed to generate image");
+
       const blob = await response.blob();
       const file = new File([blob], "generated.png", { type: "image/png" });
+      console.log(file);
       const uploaded = await upload(file.name, file, {
         access: "public",
         handleUploadUrl: "/api/upload",
       });
 
-      setImages(uploaded.url);
-    } catch (err) {
-      toast.error("Image generation failed ");
+      setImage(uploaded.url);
+      toast.success("Image generated successfully ✨");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to generate image.");
     } finally {
       setLoading(false);
     }
@@ -64,9 +65,15 @@ const Page = () => {
 
   const createPost = async () => {
     try {
+      if (!caption.trim() || !image) {
+        toast.error("Please add both caption and image.");
+        return;
+      }
+
       setPosting(true);
+
       const response = await fetch(
-        "https://ig-backend-jivs.onrender.com/post/create",
+        "https://ig-backend-qfjz.onrender.com/post/create",
         {
           method: "POST",
           headers: {
@@ -75,17 +82,20 @@ const Page = () => {
           },
           body: JSON.stringify({
             image: [image],
-            caption: caption,
+            caption,
           }),
         }
       );
 
       if (response.ok) {
-        router.push("/");
         toast.success("Post амжилттай нэмлээ ✨");
+        router.push("/");
       } else {
-        toast.error("Sorry, unavailable to create post.");
+        toast.error("Sorry, unable to create post.");
       }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong while creating the post.");
     } finally {
       setPosting(false);
     }
@@ -98,7 +108,7 @@ const Page = () => {
           <RemoveButton />
         </Link>
         <h1 className="text-xl font-bold text-gray-800">New Photo Post</h1>
-        <div className="w-8"></div>
+        <div className="w-8" />
       </div>
 
       <div className="bg-white shadow-lg rounded-2xl p-6 space-y-6">
@@ -113,12 +123,12 @@ const Page = () => {
 
         <div className="flex flex-col gap-4">
           <Textarea
-            onChange={handleCaption}
+            onChange={handleCaptionChange}
             placeholder="Write post caption here..."
             className="text-sm rounded-lg border-gray-300 focus:border-blue-400 focus:ring focus:ring-blue-200"
           />
           <Textarea
-            onChange={handleValues}
+            onChange={handlePromptChange}
             placeholder="Example: I'm walking in fog like Blade Runner 2049"
             className="text-sm rounded-lg border-gray-300 focus:border-blue-400 focus:ring focus:ring-blue-200 min-h-[100px]"
           />
@@ -127,7 +137,7 @@ const Page = () => {
         <div className="flex gap-4 justify-center">
           <Button
             className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-xl shadow-md transition duration-300 flex items-center gap-2"
-            onClick={fetchdata}
+            onClick={fetchData}
             disabled={loading}
           >
             {loading ? (
@@ -138,6 +148,7 @@ const Page = () => {
               "Generate"
             )}
           </Button>
+
           <Button
             className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-2 rounded-xl shadow-md transition duration-300 flex items-center gap-2"
             onClick={createPost}
@@ -166,4 +177,5 @@ const Page = () => {
     </div>
   );
 };
+
 export default Page;

@@ -15,6 +15,7 @@ type UserType = {
   updatedAt: Date;
   username: string;
   profilePicture?: string;
+  bio: string;
 };
 
 type PostType = {
@@ -35,7 +36,7 @@ const Page = () => {
 
   const fetchUserPostData = async () => {
     const response = await fetch(
-      `https://ig-backend-jivs.onrender.com/post/otherUser/${userId}`,
+      `https://ig-backend-qfjz.onrender.com/post/otherUser/${userId}`,
       {
         method: "GET",
         headers: { authorization: `Bearer ${token}` },
@@ -47,7 +48,7 @@ const Page = () => {
 
   const fetchUserData = async () => {
     const response = await fetch(
-      `https://ig-backend-jivs.onrender.com/getOtherUserData/${userId}`,
+      `https://ig-backend-qfjz.onrender.com/getOtherUserData/${userId}`,
       {
         method: "GET",
         headers: { authorization: `Bearer ${token}` },
@@ -67,7 +68,7 @@ const Page = () => {
 
   const followUser = async () => {
     const res = await fetch(
-      `https://ig-backend-jivs.onrender.com/follow-toggle/${userId}`,
+      `https://ig-backend-qfjz.onrender.com/follow-toggle/${userId}`,
       {
         method: "POST",
         headers: {
@@ -118,7 +119,14 @@ const Page = () => {
           )}
         </div>
       </div>
-
+      {user?.bio && (
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6 shadow-sm">
+          <h3 className="font-semibold text-gray-700 mb-1">About Me</h3>
+          <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+            {otherUser?.bio}
+          </p>
+        </div>
+      )}
       <div className="flex justify-around mb-6 text-center">
         <div>
           <div className="font-bold text-xl">{posts.length}</div>
@@ -136,7 +144,6 @@ const Page = () => {
           </div>
           <div className="text-gray-500 text-sm">Following</div>
         </div>
-        1
       </div>
 
       <div className="w-full h-[1px] bg-gray-200 mb-4"></div>

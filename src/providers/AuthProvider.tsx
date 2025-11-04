@@ -25,6 +25,7 @@ type decodedTokenType = {
   data: User;
 };
 export type User = {
+  bio: string;
   _id: string;
   username: string;
   email: string;
@@ -53,7 +54,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await fetch("https://ig-backend-jivs.onrender.com/login", {
+    const response = await fetch("https://ig-backend-qfjz.onrender.com/login", {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({
@@ -83,7 +84,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     username: string
   ) => {
     const response = await fetch(
-      "https://ig-backend-jivs.onrender.com/sign_up",
+      "https://ig-backend-qfjz.onrender.com/sign_up",
       {
         method: "POST",
         headers: { "Content-type": "application/json" },

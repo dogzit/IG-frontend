@@ -8,17 +8,15 @@ export async function POST(request: Request): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
-
       onBeforeGenerateToken: async () => {
         return {
-          allowedContentTypes: ["image/png", "image/jpeg", "image/webp"],
+          allowedContentTypes: ["image/jpeg", "image/png", "image/webp"],
           addRandomSuffix: true,
-          token: process.env.BLOB_READ_WRITE_TOKEN!,
+          tokenPayload: JSON.stringify({}),
         };
       },
-
       onUploadCompleted: async ({ blob, tokenPayload }) => {
-        console.log("Upload complete:", blob);
+        console.log("ajilaach", blob, tokenPayload);
       },
     });
 
