@@ -12,11 +12,21 @@ import { motion } from "framer-motion";
 const Page = () => {
   const { back } = useRouter();
 
+  type Comment = {
+    user: User;
+    createdAt: string;
+    comment: string;
+  };
+  type User = {
+    username: string;
+    profilePic: string;
+  };
+
   const params = useParams();
   const postId = params.postId;
   const { token } = useUser();
   const [commentValue, setCommentValue] = useState("");
-  const [comments, setComments] = useState<any[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   console.log(comments);
   const createComment = async () => {
     if (!commentValue.trim()) {
@@ -104,7 +114,7 @@ const Page = () => {
         {comments.length === 0 && (
           <p className="text-center text-gray-500 mt-6">No comments yet 😢</p>
         )}
-        {comments.map((comment: any, i: number) => (
+        {comments.map((comment: Comment, i: number) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}

@@ -151,7 +151,7 @@ const Page = () => {
       <div className="grid grid-cols-3 gap-1">
         {posts.map((post, index) =>
           post.postImages.map((image, i) => (
-            <Link href={`/profile/posts/${userId}`}>
+            <Link href={`/profile/posts/${userId}`} key={post.caption}>
               <img
                 key={`${index}-${i}`}
                 src={image}
